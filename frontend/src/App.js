@@ -15,7 +15,7 @@ function Home() {
   const [searching, setSearching] = useState(false);
   const fetchQuestions = async (q = '') => {
     setSearching(true);
-    const res = await axios.get('http://localhost:5000/api/questions' + (q ? `?q=${encodeURIComponent(q)}` : ''));
+    const res = await axios.get('https://2-wendawangzhan-production.up.railway.app/api/questions' + (q ? `?q=${encodeURIComponent(q)}` : ''));
     setQuestions(res.data);
     setSearching(false);
   };
@@ -82,7 +82,7 @@ function Ask() {
       message.warning('问题内容不能为空');
       return;
     }
-    await axios.post('http://localhost:5000/api/questions', { content });
+    await axios.post('https://2-wendawangzhan-production.up.railway.app/api/questions', { content });
     message.success('提问成功！');
     navigate('/');
   };
@@ -112,7 +112,7 @@ function CommentList({ answerId }) {
   const [content, setContent] = useState('');
   const [loading, setLoading] = useState(false);
   const fetchComments = async () => {
-    const res = await axios.get(`http://localhost:5000/api/answers/${answerId}/comments`);
+    const res = await axios.get(`https://2-wendawangzhan-production.up.railway.app/api/answers/${answerId}/comments`);
     setComments(res.data);
   };
   useEffect(() => { fetchComments(); }, [answerId]);
@@ -123,7 +123,7 @@ function CommentList({ answerId }) {
       return;
     }
     setLoading(true);
-    await axios.post(`http://localhost:5000/api/answers/${answerId}/comments`, { content });
+    await axios.post(`https://2-wendawangzhan-production.up.railway.app/api/answers/${answerId}/comments`, { content });
     setContent('');
     setLoading(false);
     fetchComments();
@@ -166,9 +166,9 @@ function QuestionDetail() {
   const [content, setContent] = useState('');
   const navigate = useNavigate();
   const fetchData = async () => {
-    const qlist = await axios.get('http://localhost:5000/api/questions');
+    const qlist = await axios.get('https://2-wendawangzhan-production.up.railway.app/api/questions');
     setQuestion(qlist.data.find(q => q._id === id));
-    const ans = await axios.get(`http://localhost:5000/api/questions/${id}/answers`);
+    const ans = await axios.get(`https://2-wendawangzhan-production.up.railway.app/api/questions/${id}/answers`);
     setAnswers(ans.data);
   };
   useEffect(() => { fetchData(); }, [id]);
@@ -178,7 +178,7 @@ function QuestionDetail() {
       message.warning('回答内容不能为空');
       return;
     }
-    await axios.post(`http://localhost:5000/api/questions/${id}/answers`, { content });
+    await axios.post(`https://2-wendawangzhan-production.up.railway.app/api/questions/${id}/answers`, { content });
     setContent('');
     message.success('回答已提交！');
     fetchData();
