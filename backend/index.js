@@ -152,7 +152,8 @@ app.delete('/api/comments/:id', adminAuth, async (req, res) => {
   res.json({ success: true });
 });
 
-const PORT = 5000;
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+// 替换监听端口和地址，兼容 Railway
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server running on http://0.0.0.0:${PORT}`);
 });
