@@ -5,6 +5,7 @@ const mongoose = require('mongoose');
 const Question = require('./models/Question');
 const Answer = require('./models/Answer');
 const Comment = require('./models/Comment');
+const jwt = require('jsonwebtoken');
 
 const app = express();
 app.use(cors());
@@ -103,6 +104,52 @@ app.get('/api/answers/:id/comments', async (req, res) => {
   } catch (err) {
     res.status(500).json({ error: '服务器错误' });
   }
+});
+
+// 管理员登录接口
+app.post('/api/admin/login', (req, res) => {
+  const { username, password } = req.body;
+  if (
+    username === process.env.ADMIN_USER &&
+    password === process.env.ADMIN_PASS
+  ) {
+    const token = jwt.sign({ admin: true }, process.env.JWT_SECRET, { expiresIn: '2h' });
+    res.json({ token });
+  } else {
+    res.status(401).json({ error: '用户名或密码错误' });
+  }
+});
+
+// 管理员权限中间件
+function adminAuth(req, res, next) {
+  const auth = req.headers.authorization;
+  if (!auth) return res.status(401).json({ error: '未登录' });
+  const token = auth.split(' ')[1];
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    if (decoded.admin) return next();
+    return res.status(403).json({ error: '无权限' });
+  } catch {
+    return res.status(401).json({ error: '登录已过期' });
+  }
+}
+
+// 删除问题
+app.delete('/api/questions/:id', adminAuth, async (req, res) => {
+  await Question.findByIdAndDelete(req.params.id);
+  res.json({ success: true });
+});
+
+// 删除回答
+app.delete('/api/answers/:id', adminAuth, async (req, res) => {
+  await Answer.findByIdAndDelete(req.params.id);
+  res.json({ success: true });
+});
+
+// 删除评论
+app.delete('/api/comments/:id', adminAuth, async (req, res) => {
+  await Comment.findByIdAndDelete(req.params.id);
+  res.json({ success: true });
 });
 
 const PORT = 5000;

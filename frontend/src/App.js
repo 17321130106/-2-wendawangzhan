@@ -1,9 +1,11 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
-import { Layout, Button, Input, Card, List, message, Typography, Space, Radio } from 'antd';
+import { Layout, Button, Input, Card, List, message, Typography, Space, Radio, Modal } from 'antd';
 import { PlusOutlined, ArrowLeftOutlined } from '@ant-design/icons';
 import 'antd/dist/reset.css';
+import AdminLogin from './AdminLogin';
+import AdminPanel from './AdminPanel';
 
 const { Header, Content, Footer } = Layout;
 const { Title, Text } = Typography;
@@ -224,15 +226,49 @@ function QuestionDetail() {
   );
 }
 
-function App() {
+function GuideModal() {
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    if (!localStorage.getItem('guide_shown')) {
+      setVisible(true);
+    }
+  }, []);
+  const handleClose = () => {
+    setVisible(false);
+    localStorage.setItem('guide_shown', '1');
+  };
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/ask" element={<Ask />} />
-        <Route path="/question/:id" element={<QuestionDetail />} />
-      </Routes>
-    </Router>
+    <Modal open={visible} footer={null} closable={false} centered>
+      <h2>欢迎使用匿名问答网站！</h2>
+      <p>这里可以匿名提问、回答、评论，无需注册。</p>
+      <ul>
+        <li>点击"我要提问"可以匿名发布问题</li>
+        <li>点击问题可进入详情页进行回答和评论</li>
+        <li>无需注册登录，所有操作均为匿名</li>
+      </ul>
+      <div style={{textAlign:'right'}}>
+        <Button type="primary" onClick={handleClose}>我知道了</Button>
+      </div>
+    </Modal>
+  );
+}
+
+function App() {
+  const [adminLogged, setAdminLogged] = useState(!!localStorage.getItem('admin_token'));
+  return (
+    <>
+      <GuideModal />
+      <Router>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/ask" element={<Ask />} />
+          <Route path="/question/:id" element={<QuestionDetail />} />
+          <Route path="/admin" element={
+            adminLogged ? <AdminPanel /> : <AdminLogin onLogin={() => setAdminLogged(true)} />
+          } />
+        </Routes>
+      </Router>
+    </>
   );
 }
 
