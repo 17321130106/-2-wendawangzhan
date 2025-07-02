@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { Layout, Menu, Button, Input, Card, List, message, Typography, Space, Radio } from 'antd';
@@ -111,11 +111,11 @@ function CommentList({ answerId }) {
   const [comments, setComments] = useState([]);
   const [content, setContent] = useState('');
   const [loading, setLoading] = useState(false);
-  const fetchComments = async () => {
+  const fetchComments = useCallback(async () => {
     const res = await axios.get(`https://2-wendawangzhan-production.up.railway.app/api/answers/${answerId}/comments`);
     setComments(res.data);
-  };
-  useEffect(() => { fetchComments(); }, [answerId]);
+  }, [answerId]);
+  useEffect(() => { fetchComments(); }, [answerId, fetchComments]);
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!content.trim()) {
@@ -165,13 +165,13 @@ function QuestionDetail() {
   const [answers, setAnswers] = useState([]);
   const [content, setContent] = useState('');
   const navigate = useNavigate();
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     const qlist = await axios.get('https://2-wendawangzhan-production.up.railway.app/api/questions');
     setQuestion(qlist.data.find(q => q._id === id));
     const ans = await axios.get(`https://2-wendawangzhan-production.up.railway.app/api/questions/${id}/answers`);
     setAnswers(ans.data);
-  };
-  useEffect(() => { fetchData(); }, [id]);
+  }, [id]);
+  useEffect(() => { fetchData(); }, [id, fetchData]);
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!content.trim()) {
