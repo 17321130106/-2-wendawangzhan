@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
-import { Layout, Menu, Button, Input, Card, List, message, Typography, Space, Radio } from 'antd';
+import { Layout, Button, Input, Card, List, message, Typography, Space, Radio } from 'antd';
 import { PlusOutlined, ArrowLeftOutlined } from '@ant-design/icons';
 import 'antd/dist/reset.css';
 
