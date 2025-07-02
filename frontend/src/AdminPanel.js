@@ -3,6 +3,8 @@ import { Card, List, Button, message, Typography, Modal } from 'antd';
 import axios from 'axios';
 const { Title } = Typography;
 
+const API_BASE = 'https://2-wendawangzhan-production.up.railway.app';
+
 export default function AdminPanel() {
   const [questions, setQuestions] = useState([]);
   const [answers, setAnswers] = useState([]);
@@ -10,11 +12,11 @@ export default function AdminPanel() {
   const token = localStorage.getItem('admin_token');
 
   const fetchAll = async () => {
-    const qs = await axios.get('/api/questions');
+    const qs = await axios.get(`${API_BASE}/api/questions`);
     setQuestions(qs.data);
-    const as = await axios.get('/api/answers');
+    const as = await axios.get(`${API_BASE}/api/answers`);
     setAnswers(as.data);
-    const cs = await axios.get('/api/comments');
+    const cs = await axios.get(`${API_BASE}/api/comments`);
     setComments(cs.data);
   };
   useEffect(() => { fetchAll(); }, []);
@@ -24,7 +26,7 @@ export default function AdminPanel() {
       title: '确认删除？',
       onOk: async () => {
         try {
-          await axios.delete(`/api/${type}/${id}`, {
+          await axios.delete(`${API_BASE}/api/${type}/${id}`, {
             headers: { Authorization: `Bearer ${token}` }
           });
           message.success('删除成功');

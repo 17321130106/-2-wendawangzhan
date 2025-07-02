@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 import { Input, Button, message, Card } from 'antd';
 import axios from 'axios';
 
+const API_BASE = 'https://2-wendawangzhan-production.up.railway.app';
+
 export default function AdminLogin({ onLogin }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const handleLogin = async () => {
     try {
-      const res = await axios.post('/api/admin/login', { username, password });
+      const res = await axios.post(`${API_BASE}/api/admin/login`, { username, password });
       localStorage.setItem('admin_token', res.data.token);
       message.success('登录成功');
       if (onLogin) onLogin();
